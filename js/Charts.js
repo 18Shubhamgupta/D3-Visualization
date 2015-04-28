@@ -396,6 +396,154 @@
 			
 			}
 		}
+		
+	var drawBar={	
+		 myBarChart:function(options){
+				var	options=$.extend({
+								'color': '#8FB258',
+								'data':[],
+								'hideYAxis':false,
+								'widthOfBar':'',
+								'formatDate':"%Y-%m",
+								'toolTipData':""
+							}, options);
+				
+				var leftMargin=rightMargin=.02*width;
+				var topMargin=bottomMargin=.02*height;
+				
+				width=width-leftMargin-rightMargin;
+				height=height-topMargin-bottomMargin;
+				
+				yAxisWidth=.1*width;
+				xAxisHeight=.1*height;
+				
+				graphWidth=width-yAxisWidth;
+				graphHeight=height-xAxisHeight;
+				
+				var color=options.color;
+					
+				var data;
+				if(options.data.length == 0 ){
+					data=chartData;
+				}else{
+					data=options.data;
+				}
+				var widthOfEachBar;
+				
+				if(options.widthOfBar != ''){	
+					widthOfEachBar=options.widthOfBar;
+				}
+				var	parseDate=d3.time.format(options.formatDate).parse;
+				
+				var format=d3.time.format("%b-%Y");
+				var x = d3.scale.ordinal().rangeRoundBands([0, graphWidth], .2);
+
+				var y = d3.scale.linear().range([graphHeight, 0]);
+
+				var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom")
+					.ticks(5)
+					.tickFormat(d3.time.format("%b"));
+
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left")
+					.ticks(4).
+					tickSize(5, 0).
+					tickFormat(d3.format(".2s"));
+
+				jQuery(data).each(function(i,obj){
+				obj.date=parseDate(obj.date);
+				obj.value=+obj.value;
+				});
+				
+					
+				  x.domain(data.map(function(d) { return d.date; }));
+				  y.domain([0, d3.max(data, function(d) { return d.value; })]);
+					
+				
+				  svgElement.append("g")
+					  .attr("class", "x axis")
+					  .attr("transform", "translate("+(leftMargin+yAxisWidth)+"," + (topMargin+graphHeight) + ")")
+					  .call(xAxis)
+					.selectAll("text")
+					  .style("text-anchor", "middle")
+					  //.attr("dx", "-.8em")
+					  //.attr("dy", "-.55em")
+					  //.attr("transform", "rotate(-90)" );
+				if(!options.hideYAxis){
+				  svgElement.append("g")
+					  .attr("class", "y axis")
+					  .attr("transform", "translate("+(leftMargin+yAxisWidth)+","+topMargin+")" )
+					  .call(yAxis)
+					.append("text")
+					  .attr("transform", "rotate(-90)")
+					  .attr("y", (-(yAxisWidth/1.3)))			//x and y are reversed due to rotation
+					  .attr("x", (-(graphHeight/3)))
+					  .attr("dy", ".71em")
+					  .style("text-anchor", "end")
+					  .text("Value ($)");
+					 } 
+					appendToolTip();
+				
+					svgElement.append("g")
+					.attr("transform","translate("+(leftMargin+yAxisWidth)+","+(topMargin)+")")
+				    .selectAll("bar")
+					.data(data)
+					.enter().append("rect")
+					.style("fill", color)
+					.attr("x", yAxisWidth)
+					.attr("width", x.rangeBand())
+					.attr("stroke","white")
+					.attr("stroke-width","0")
+					.attr("y", function(d) { return y(d.value); })
+					.attr("height", "0")
+		
+					  .on("mouseover",function(d,i){
+							d3.select(this).style("opacity",0.6)
+							.attr("stroke-width","3");
+							attachToolTip.showToolTip(d3.event,d.value,format(d.date),false,options.toolTipData);	
+					  })
+					  .on("mousemove",function(d,i){
+							d3.select(this).style("opacity",0.6)
+							.attr("stroke-width","3");
+							
+							svgElement.append("line")
+							.attr("class","tipline")
+							.attr("x1",  (x(d.date)+leftMargin+yAxisWidth))
+							.attr("y1",  (y(d.value)+topMargin))
+							.attr("x2", (x(d.date)+leftMargin+yAxisWidth))
+							.attr("y2",	(y(d.value)+topMargin))
+							.style("stroke-dasharray", ("3, 3"))
+							.attr("stroke-width", 1)
+                            .attr("stroke", "#D80000")
+							
+							.transition()
+							.duration(750)
+							.attr("x2", (leftMargin+yAxisWidth ))
+							.attr("y2", (y(d.value)+topMargin) );
+							 
+							attachToolTip.showToolTip(d3.event,d.value,format(d.date),false,options.toolTipData);	
+					  })
+					  .on("mouseout",function(d,i){
+							d3.select(this).style("opacity",1)
+							.attr("stroke-width","0");
+							
+							svgElement.selectAll("line.tipline").remove()
+							attachToolTip.hideTooTip();
+					  })
+					  .transition().duration(1000)
+					  .delay(function(d,i){
+								return i*150;
+								})
+					  .attr("x", function(d) { return x(d.date); })		
+					  .attr("height", function(d) { return ((graphHeight) - y(d.value)); })
+					  .ease("linear");
+					  
+				 
+			}
+		}	
 	
 	
 	function createLegends(svgElement,width,height,graphWidth,graphHeight,color,legendsArray,legendPosition,legendsLength)
@@ -531,6 +679,7 @@
 		return {
            
 			showToolTip:attachToolTip.showToolTip,
+			myBarChart:drawBar.myBarChart,
 			drawPieChartWithTransition:drawPieChart.drawPieChartWithTransition
 			};
     };
