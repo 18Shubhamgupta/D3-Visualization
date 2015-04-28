@@ -1,4 +1,4 @@
-#PieChart{	background: rgb(255,255,255); /* Old browsers */
+#PieChart,#BarChart{	background: rgb(255,255,255); /* Old browsers */
 background: -moz-linear-gradient(-45deg, rgba(255,255,255,1) 62%, rgba(242,240,239,1) 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, right bottom, color-stop(62%,rgba(255,255,255,1)), color-stop(100%,rgba(242,240,239,1))); /* Chrome,Safari4+ */
 background: -webkit-linear-gradient(-45deg, rgba(255,255,255,1) 62%,rgba(242,240,239,1) 100%); /* Chrome10+,Safari5.1+ */
