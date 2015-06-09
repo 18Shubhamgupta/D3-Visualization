@@ -542,7 +542,138 @@
 					  .ease("linear");
 					  
 				 
+			},
+			myHorizontalBarChart:function(options){
+				var	options=$.extend({
+								'color': '#8FB258',
+								'data':[],
+								'hideYAxis':false,
+								'widthOfBar':'',
+
+								'toolTipData':""
+							}, options);
+				
+				var leftMargin=rightMargin=.02*width;
+				var topMargin=bottomMargin=.02*height;
+				
+				width=width-leftMargin-rightMargin;
+				height=height-topMargin-bottomMargin;
+				
+				yAxisWidth=.1*width;
+				xAxisHeight=.1*height;
+				
+				graphWidth=width-yAxisWidth;
+				graphHeight=height-xAxisHeight;
+				
+				var color=options.color;
+					
+				var data;
+				if(options.data.length == 0 ){
+					data=chartData;
+				}else{
+					data=options.data;
+				}
+				
+				var x = d3.scale.linear().range([0, graphWidth]);
+
+				var y = d3.scale.ordinal().rangeBands([0, graphHeight],.4);
+
+				var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom")
+					.ticks(5)
+					//.tickFormat(d3.time.format("%b"));
+
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left");
+				var yAxisLeg=[];									
+				x.domain([0, d3.max(data, function(d) { return d.xName; })]);
+				y.domain(data.map(function(d) { 
+					if (d.yName.length > 14){
+						yAxisLeg.push(d.yName.substring(0, 14) + '..');
+						return (d.yName.substring(0, 14) + '..');
+					} 
+				 
+				else {
+					yAxisLeg.push(d.yName);
+					return d.yName;  
+					}
+					}));
+					
+					svgElement.append("g")
+					  .attr("class", "x axis")
+					  .attr("transform", "translate("+(leftMargin+yAxisWidth)+"," + (topMargin+graphHeight) + ")")
+					  .call(xAxis)
+					.selectAll("text")
+					  .style("text-anchor", "middle")
+					  
+				if(!options.hideYAxis){
+				  svgElement.append("g")
+					  .attr("class", "y axis")
+					  .attr("transform", "translate("+(leftMargin+yAxisWidth)+","+topMargin+")" )
+					  .call(yAxis)
+					
+					 } 
+					appendToolTip();
+				
+					svgElement.append("g")
+					.attr("transform","translate("+(leftMargin+yAxisWidth)+","+(topMargin)+")")
+				    .selectAll("rect")
+					.data(data)
+					.enter().append("rect")
+					.style("fill", color)
+					.attr("x", "0")
+					.attr("width","0")
+					.attr("stroke","white")
+					.attr("stroke-width","0")
+					.attr("y", function(d,i) { return y(yAxisLeg[i]); })
+					.attr("height", y.rangeBand())
+		
+					  .on("mouseover",function(d,i){
+							d3.select(this).style("opacity",0.6)
+							.attr("stroke-width","3");
+							attachToolTip.showToolTip(d3.event,d.xName,d.yName,false,options.toolTipData);	
+					  })
+					  .on("mousemove",function(d,i){
+							d3.select(this).style("opacity",0.6)
+							.attr("stroke-width","3");
+							
+							svgElement.append("line")
+							.attr("class","tipline")
+							.attr("x1", (leftMargin+yAxisWidth+x(d.xName)) )
+							.attr("y1",  (y(yAxisLeg[i])+y.rangeBand()))
+							.attr("x2",(leftMargin+yAxisWidth+x(d.xName)))
+							.attr("y2",(y(yAxisLeg[i])+y.rangeBand())	)
+							.style("stroke-dasharray", ("3, 3"))
+							.attr("stroke-width", 1)
+                            .attr("stroke", "#D80000")
+							
+							.transition()
+							.duration(750)
+							.attr("x2", (leftMargin+yAxisWidth+x(d.xName)))
+							.attr("y2", (topMargin+graphHeight) );
+							 
+							attachToolTip.showToolTip(d3.event,d.xName,d.yName,false,options.toolTipData);
+					  })
+					  .on("mouseout",function(d,i){
+							d3.select(this).style("opacity",1)
+							.attr("stroke-width","0");
+							
+							svgElement.selectAll("line.tipline").remove()
+							attachToolTip.hideTooTip();
+					  })
+					  .transition().duration(1000)
+					  .delay(function(d,i){
+								return i*150;
+								})
+					  .attr("width", function(d) { return x(d.xName); })		
+					  .attr("y", function(d,i) { return  y(yAxisLeg[i]); })
+					  .ease("linear");
+					  
+				 
 			}
+			
 		}	
 	
 	
@@ -680,6 +811,7 @@
            
 			showToolTip:attachToolTip.showToolTip,
 			myBarChart:drawBar.myBarChart,
+			myHorizontalBarChart:drawBar.myHorizontalBarChart,
 			drawPieChartWithTransition:drawPieChart.drawPieChartWithTransition
 			};
     };

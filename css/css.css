@@ -1,4 +1,4 @@
-#PieChart,#BarChart{	background: rgb(255,255,255); /* Old browsers */
+#PieChart,#BarChart,#horizontalBar{	background: rgb(255,255,255); /* Old browsers */
 background: -moz-linear-gradient(-45deg, rgba(255,255,255,1) 62%, rgba(242,240,239,1) 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, right bottom, color-stop(62%,rgba(255,255,255,1)), color-stop(100%,rgba(242,240,239,1))); /* Chrome,Safari4+ */
 background: -webkit-linear-gradient(-45deg, rgba(255,255,255,1) 62%,rgba(242,240,239,1) 100%); /* Chrome10+,Safari5.1+ */
@@ -37,12 +37,26 @@ box-shadow:4px 7px 7px #dddddd;
     width: 600px;
 
 	}	
+	
+#horizontalBar{
+	 border: 1px solid #c9c9c9;
+    height: 400px;
+    margin: 30px 0 0;
+    padding: 10px;
+    position: absolute;
+    top: -22px;
+    width: 600px;
+	}
 #tooltipChart
 	{position: absolute; background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.8); padding:5px 10px; min-height: 30px; z-index: 99999999 ! important; box-shadow: 0px 0px 40px rgb(34, 34, 33) inset; float: left; border-radius: 5px; font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; color: white; text-shadow: 1px 0px 1px rgb(0, 0, 0); left: 277px;display: none;pointer-events: none;}
 #tooltipChart .arrow
 	{position: absolute;margin-left: -18px;font-size: 24px;color:#272726; text-shadow:none; top: 7px;}
 	
 #ruler { visibility: hidden; white-space: nowrap; }
+
+
+	
+	
 
 .headingText{ font-family:calibri;color:#fff; font-size:17px; padding:5px 15px; margin:-11px; margin-bottom:0px; background: rgb(247,247,247); /* Old browsers */
 background: -moz-linear-gradient(top, rgba(247,247,247,1) 6%, rgba(238,238,238,1) 100%); /* FF3.6+ */
