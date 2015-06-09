@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<script src="http://code.jquery.com/jquery-2.1.3.js"></script>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="js/Charts.js"></script>
+
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="css/css.css"  rel="stylesheet">
+
+
+<body>
+<div>
+ 
+ <div id="stackedBar" > <div class="headingText">Stack Chart</div>
+	
+  </div>​
+  <script>
+
+var dataset=[
+																{
+																"channel":"Amazon Sales Channel",
+																"amtRTO":"17200.00",
+																"amtReplacement":"1200.00",
+																"amtRefund":"35298.00",
+																"qtyRTO":13,
+																"qtyReplacement":1,
+																"qtyRefund":7
+																},
+																{
+																"channel":"Flipkart Sales Channel",
+																"amtRTO":"6800.00",
+																"amtReplacement":"12199.00",
+																"amtRefund":"6500.00",
+																"qtyRTO":6,
+																"qtyReplacement":2,
+																"qtyRefund":2
+																},
+																{
+																"channel":"Web Channel",
+																"amtRTO":"0.00",
+																"amtReplacement":"5400.00",
+																"amtRefund":"36999.00",
+																"qtyRTO":0,
+																"qtyReplacement":1,
+																"qtyRefund":4
+																}
+			];
+			var sData1=[];
+			var columnHeading={"channel":"Channel","amtRTO":"RTO (&#8377;)","amtReplacement":"Replacement (&#8377;)","amtRefund":"Refund (&#8377;)"};
+			$(dataset).each(function(i,obj){
+			
+				sData1.push({"amtRTO":obj.amtRTO,"amtReplacement":obj.amtReplacement,'amtRefund':obj.amtRefund,'timeIndex':obj.channel});
+			});
+			 var color=["#0d5977","#0174DF","#26c1ff"];
+			var stackChart=$("#stackedBar").ChartingD3();
+			stackChart.stackedBarChart({'data':sData1,'xFieldName':'timeIndex','widthOfBar':20,'showAllTicks':true,'columnHeadingArray':columnHeading,'xAxisIndicationLabel':'Category','yAxisIndicationLabel':'Amount'},color);
+			
+		
+</script>
+</div>
+</body>
